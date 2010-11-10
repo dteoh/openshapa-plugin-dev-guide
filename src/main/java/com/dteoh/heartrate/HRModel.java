@@ -1,5 +1,8 @@
 package com.dteoh.heartrate;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -26,11 +29,16 @@ public class HRModel {
     /** Current position in our data structures. */
     private int pos;
 
+    /** Handle property change propagation. */
+    private PropertyChangeSupport changeSupport;
+
     public HRModel(final File data) {
         timestamps = new ArrayList<Long>();
         heartRates = new ArrayList<Double>();
 
         pos = 0;
+
+        changeSupport = new PropertyChangeSupport(this);
 
         parseData(data);
     }
@@ -112,25 +120,44 @@ public class HRModel {
     }
 
     public void next() {
-        pos = Math.min(pos + 1, timestamps.size() - 1);
+        changePosition(Math.min(pos + 1, timestamps.size() - 1));
     }
 
     public void prev() {
-        pos = Math.max(0, pos - 1);
+        changePosition(Math.max(0, pos - 1));
     }
 
     public void seek(final long timestamp) {
         int i = Collections.binarySearch(timestamps, timestamp);
 
         if (i >= 0) {
-            pos = i;
+            changePosition(i);
         } else {
 
             // If it's not in the list, we get i = -(insertion point) - 1
             // Find what the insertion point is, then take one away because
             // we want the closest element.
-            pos = -(i + 1) - 1;
+            int newPos = -(i + 1) - 1;
+            changePosition(newPos);
         }
+    }
+
+    private void changePosition(final int newIndex) {
+        int oldIndex = pos;
+        pos = newIndex;
+        changeSupport.firePropertyChange("position", oldIndex, pos);
+    }
+
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public void addPositionListener(final PropertyChangeListener listener) {
+        changeSupport.addPropertyChangeListener("position", listener);
+    }
+
+    public void removePositionListener(final PropertyChangeListener listener) {
+        changeSupport.removePropertyChangeListener("position", listener);
     }
 
 }

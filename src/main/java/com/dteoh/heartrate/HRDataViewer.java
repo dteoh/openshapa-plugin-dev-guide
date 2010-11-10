@@ -1,5 +1,7 @@
 package com.dteoh.heartrate;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Frame;
 
 import java.io.File;
@@ -29,6 +31,9 @@ public class HRDataViewer implements DataViewer {
     /** Dialog for showing our visualizations. */
     private JDialog hrDialog;
 
+    /** Panel for showing our visualizations. */
+    private HRPanel hrPanel;
+
     /** Data viewer offset. */
     private long offset;
 
@@ -44,7 +49,14 @@ public class HRDataViewer implements DataViewer {
                     hrDialog = new JDialog(parent, modal);
                     hrDialog.setName("HRDataViewer");
                     hrDialog.setResizable(true);
-                    hrDialog.setSize(250, 250);
+                    hrDialog.setSize(640, 480);
+
+                    Container c = hrDialog.getContentPane();
+                    c.setLayout(new BorderLayout());
+
+                    hrPanel = new HRPanel();
+                    c.add(hrPanel, BorderLayout.CENTER);
+
                     hrDialog.setVisible(true);
                 }
             };
@@ -91,6 +103,8 @@ public class HRDataViewer implements DataViewer {
     @Override public void setDataFeed(final File dataFeed) {
         data = dataFeed;
         model = new HRModel(data);
+
+        hrPanel.setModel(model);
 
         SwingUtilities.invokeLater(new Runnable() {
                 @Override public void run() {
