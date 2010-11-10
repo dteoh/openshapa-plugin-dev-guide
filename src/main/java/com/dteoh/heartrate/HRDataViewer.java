@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 
@@ -33,6 +31,12 @@ public class HRDataViewer implements DataViewer {
 
     /** Data viewer offset. */
     private long offset;
+
+    /** Data to visualize. */
+    private File data;
+
+    /** Data model. */
+    private HRModel model;
 
     public HRDataViewer(final Frame parent, final boolean modal) {
         Runnable edtTask = new Runnable() {
@@ -60,10 +64,6 @@ public class HRDataViewer implements DataViewer {
         return 1;
     }
 
-    @Override public long getDuration() {
-        return TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES);
-    }
-
     @Override public void setIdentifier(final Identifier id) {
         this.id = id;
     }
@@ -88,6 +88,30 @@ public class HRDataViewer implements DataViewer {
         hrDialog.setVisible(isVisible);
     }
 
+    @Override public void setDataFeed(final File dataFeed) {
+        data = dataFeed;
+        model = new HRModel(data);
+
+        SwingUtilities.invokeLater(new Runnable() {
+                @Override public void run() {
+                    getParentJDialog().setTitle(dataFeed.getName());
+                }
+            });
+    }
+
+    @Override public File getDataFeed() {
+        return data;
+    }
+
+    @Override public long getDuration() {
+
+        if (model == null) {
+            return 0;
+        }
+
+        return model.getDuration();
+    }
+
     @Override public void addViewerStateListener(
         final ViewerStateListener vsl) {
         // TODO Auto-generated method stub
@@ -109,11 +133,6 @@ public class HRDataViewer implements DataViewer {
         return null;
     }
 
-    @Override public File getDataFeed() {
-
-        // TODO Auto-generated method stub
-        return null;
-    }
 
     @Override public boolean isPlaying() {
 
@@ -137,11 +156,6 @@ public class HRDataViewer implements DataViewer {
     @Override public void seekTo(final long position) {
         // TODO Auto-generated method stub
     }
-
-    @Override public void setDataFeed(final File dataFeed) {
-        // TODO Auto-generated method stub
-    }
-
 
     @Override public void setDatastore(final Datastore sDB) {
         // TODO Auto-generated method stub
