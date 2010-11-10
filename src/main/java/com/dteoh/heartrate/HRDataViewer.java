@@ -112,6 +112,22 @@ public class HRDataViewer implements DataViewer {
         return model.getDuration();
     }
 
+    @Override public long getCurrentTime() throws Exception {
+
+        if (model == null) {
+            return 0;
+        }
+
+        return model.getCurrentTimestamp();
+    }
+
+    @Override public void seekTo(final long position) {
+
+        if (model != null) {
+            model.seek(position);
+        }
+    }
+
     @Override public void addViewerStateListener(
         final ViewerStateListener vsl) {
         // TODO Auto-generated method stub
@@ -121,18 +137,11 @@ public class HRDataViewer implements DataViewer {
         // TODO Auto-generated method stub
     }
 
-    @Override public long getCurrentTime() throws Exception {
-
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
     @Override public CustomActions getCustomActions() {
 
         // TODO Auto-generated method stub
         return null;
     }
-
 
     @Override public boolean isPlaying() {
 
@@ -150,10 +159,6 @@ public class HRDataViewer implements DataViewer {
 
     @Override public void removeViewerStateListener(
         final ViewerStateListener vsl) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override public void seekTo(final long position) {
         // TODO Auto-generated method stub
     }
 

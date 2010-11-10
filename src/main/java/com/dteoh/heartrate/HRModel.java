@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -22,9 +23,14 @@ public class HRModel {
     /** Heart rate data. */
     private List<Double> heartRates;
 
+    /** Current position in our data structures. */
+    private int pos;
+
     public HRModel(final File data) {
         timestamps = new ArrayList<Long>();
         heartRates = new ArrayList<Double>();
+
+        pos = 0;
 
         parseData(data);
     }
@@ -85,6 +91,46 @@ public class HRModel {
         }
 
         return timestamps.get(timestamps.size() - 1) - timestamps.get(0);
+    }
+
+    public double getCurrentHeartRate() {
+
+        if (pos < heartRates.size()) {
+            return heartRates.get(pos);
+        }
+
+        return 0;
+    }
+
+    public long getCurrentTimestamp() {
+
+        if (pos < timestamps.size()) {
+            return timestamps.get(pos);
+        }
+
+        return 0;
+    }
+
+    public void next() {
+        pos = Math.min(pos + 1, timestamps.size() - 1);
+    }
+
+    public void prev() {
+        pos = Math.max(0, pos - 1);
+    }
+
+    public void seek(final long timestamp) {
+        int i = Collections.binarySearch(timestamps, timestamp);
+
+        if (i >= 0) {
+            pos = i;
+        } else {
+
+            // If it's not in the list, we get i = -(insertion point) - 1
+            // Find what the insertion point is, then take one away because
+            // we want the closest element.
+            pos = -(i + 1) - 1;
+        }
     }
 
 }
