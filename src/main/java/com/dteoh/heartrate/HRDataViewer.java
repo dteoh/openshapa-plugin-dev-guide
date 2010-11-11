@@ -43,6 +43,12 @@ public class HRDataViewer implements DataViewer {
     /** Data model. */
     private HRModel model;
 
+    /** Data viewer clock. */
+    private Clock clock;
+
+    /** Data viewer current playback rate. */
+    private double playbackRate;
+
     public HRDataViewer(final Frame parent, final boolean modal) {
         Runnable edtTask = new Runnable() {
                 @Override public void run() {
@@ -66,6 +72,9 @@ public class HRDataViewer implements DataViewer {
         } else {
             SwingUtilities.invokeLater(edtTask);
         }
+
+        clock = new Clock();
+        playbackRate = 1D;
     }
 
     @Override public JDialog getParentJDialog() {
@@ -142,6 +151,43 @@ public class HRDataViewer implements DataViewer {
         }
     }
 
+    @Override public boolean isPlaying() {
+        return clock.isTicking();
+    }
+
+    @Override public void stop() {
+        clock.stop();
+    }
+
+    @Override public void setPlaybackSpeed(final float rate) {
+        playbackRate = rate;
+    }
+
+    @Override public void play() {
+        Runnable task;
+
+        if (playbackRate < 0) {
+            task = new Runnable() {
+                    @Override public void run() {
+                        model.prev();
+                    }
+                };
+        } else if (playbackRate > 0) {
+            task = new Runnable() {
+
+                    @Override public void run() {
+                        model.next();
+                    }
+                };
+        } else {
+            stop();
+
+            return;
+        }
+
+        clock.start(task, getFrameRate(), playbackRate);
+    }
+
     @Override public void addViewerStateListener(
         final ViewerStateListener vsl) {
         // TODO Auto-generated method stub
@@ -157,19 +203,11 @@ public class HRDataViewer implements DataViewer {
         return null;
     }
 
-    @Override public boolean isPlaying() {
-
-        // TODO Auto-generated method stub
-        return false;
-    }
 
     @Override public void loadSettings(final InputStream is) {
         // TODO Auto-generated method stub
     }
 
-    @Override public void play() {
-        // TODO Auto-generated method stub
-    }
 
     @Override public void removeViewerStateListener(
         final ViewerStateListener vsl) {
@@ -185,13 +223,6 @@ public class HRDataViewer implements DataViewer {
         // TODO Auto-generated method stub
     }
 
-    @Override public void setPlaybackSpeed(final float rate) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override public void stop() {
-        // TODO Auto-generated method stub
-    }
 
     @Override public void storeSettings(final OutputStream os) {
         // TODO Auto-generated method stub

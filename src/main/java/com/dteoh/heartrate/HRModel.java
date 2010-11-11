@@ -119,15 +119,15 @@ public class HRModel {
         return 0;
     }
 
-    public void next() {
+    public synchronized void next() {
         changePosition(Math.min(pos + 1, timestamps.size() - 1));
     }
 
-    public void prev() {
+    public synchronized void prev() {
         changePosition(Math.max(0, pos - 1));
     }
 
-    public void seek(final long timestamp) {
+    public synchronized void seek(final long timestamp) {
         int i = Collections.binarySearch(timestamps, timestamp);
 
         if (i >= 0) {
