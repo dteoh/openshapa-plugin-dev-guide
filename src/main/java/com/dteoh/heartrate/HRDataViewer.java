@@ -5,6 +5,7 @@ import java.awt.Container;
 import java.awt.Frame;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -17,6 +18,8 @@ import org.openshapa.models.id.Identifier;
 import org.openshapa.plugins.CustomActions;
 import org.openshapa.plugins.DataViewer;
 import org.openshapa.plugins.ViewerStateListener;
+
+import org.openshapa.util.DataViewerUtils;
 
 import org.openshapa.views.DataController;
 import org.openshapa.views.component.DefaultTrackPainter;
@@ -188,6 +191,24 @@ public class HRDataViewer implements DataViewer {
         clock.start(task, getFrameRate(), playbackRate);
     }
 
+    @Override public void storeSettings(final OutputStream os) {
+
+        try {
+            DataViewerUtils.storeDefaults(this, os);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override public void loadSettings(final InputStream is) {
+
+        try {
+            DataViewerUtils.loadDefaults(this, is);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     @Override public void addViewerStateListener(
         final ViewerStateListener vsl) {
         // TODO Auto-generated method stub
@@ -203,12 +224,6 @@ public class HRDataViewer implements DataViewer {
         return null;
     }
 
-
-    @Override public void loadSettings(final InputStream is) {
-        // TODO Auto-generated method stub
-    }
-
-
     @Override public void removeViewerStateListener(
         final ViewerStateListener vsl) {
         // TODO Auto-generated method stub
@@ -220,11 +235,6 @@ public class HRDataViewer implements DataViewer {
 
     @Override public void setParentController(
         final DataController dataController) {
-        // TODO Auto-generated method stub
-    }
-
-
-    @Override public void storeSettings(final OutputStream os) {
         // TODO Auto-generated method stub
     }
 
