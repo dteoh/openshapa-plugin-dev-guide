@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 
@@ -52,6 +55,9 @@ public class HRDataViewer implements DataViewer {
     /** Data viewer current playback rate. */
     private double playbackRate;
 
+    /** Data viewer state listeners. */
+    private List<ViewerStateListener> stateListeners;
+
     public HRDataViewer(final Frame parent, final boolean modal) {
         Runnable edtTask = new Runnable() {
                 @Override public void run() {
@@ -76,6 +82,7 @@ public class HRDataViewer implements DataViewer {
             SwingUtilities.invokeLater(edtTask);
         }
 
+        stateListeners = new ArrayList<ViewerStateListener>();
         clock = new Clock();
         playbackRate = 1D;
     }
@@ -211,7 +218,18 @@ public class HRDataViewer implements DataViewer {
 
     @Override public void addViewerStateListener(
         final ViewerStateListener vsl) {
-        // TODO Auto-generated method stub
+
+        if (vsl != null) {
+            stateListeners.add(vsl);
+        }
+    }
+
+    @Override public void removeViewerStateListener(
+        final ViewerStateListener vsl) {
+
+        if (vsl != null) {
+            stateListeners.remove(vsl);
+        }
     }
 
     @Override public void clearDataFeed() {
@@ -224,10 +242,6 @@ public class HRDataViewer implements DataViewer {
         return null;
     }
 
-    @Override public void removeViewerStateListener(
-        final ViewerStateListener vsl) {
-        // TODO Auto-generated method stub
-    }
 
     @Override public void setDatastore(final Datastore sDB) {
         // TODO Auto-generated method stub
