@@ -92,11 +92,11 @@ public class HRPanel extends JPanel {
 
     private Color getColorForRate(final double rate) {
 
-        if (rate < 120D) {
+        if (rate < 80D) {
             return Color.GREEN.brighter();
         }
 
-        if (rate < 160D) {
+        if (rate < 120D) {
             return Color.YELLOW.darker();
         }
 
