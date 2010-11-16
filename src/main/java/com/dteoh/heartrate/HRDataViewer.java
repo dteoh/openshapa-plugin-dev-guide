@@ -12,6 +12,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractButton;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 
@@ -19,6 +22,7 @@ import org.openshapa.models.db.Datastore;
 import org.openshapa.models.id.Identifier;
 
 import org.openshapa.plugins.CustomActions;
+import org.openshapa.plugins.CustomActionsAdapter;
 import org.openshapa.plugins.DataViewer;
 import org.openshapa.plugins.ViewerStateListener;
 
@@ -58,6 +62,16 @@ public class HRDataViewer implements DataViewer {
     /** Data viewer state listeners. */
     private List<ViewerStateListener> stateListeners;
 
+    /** Action button for demo purposes. */
+    private JButton sampleButton;
+
+    /** Supported custom actions. */
+    private CustomActions actions = new CustomActionsAdapter() {
+            @Override public AbstractButton getActionButton1() {
+                return sampleButton;
+            }
+        };
+
     public HRDataViewer(final Frame parent, final boolean modal) {
         Runnable edtTask = new Runnable() {
                 @Override public void run() {
@@ -73,6 +87,12 @@ public class HRDataViewer implements DataViewer {
                     c.add(hrPanel, BorderLayout.CENTER);
 
                     hrDialog.setVisible(true);
+
+                    sampleButton = new JButton();
+                    sampleButton.setIcon(new ImageIcon(
+                            HRDataViewer.class.getResource("heart.png")));
+                    sampleButton.setBorderPainted(false);
+                    sampleButton.setContentAreaFilled(false);
                 }
             };
 
@@ -232,16 +252,13 @@ public class HRDataViewer implements DataViewer {
         }
     }
 
+    @Override public CustomActions getCustomActions() {
+        return actions;
+    }
+
     @Override public void clearDataFeed() {
         // TODO Auto-generated method stub
     }
-
-    @Override public CustomActions getCustomActions() {
-
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 
     @Override public void setDatastore(final Datastore sDB) {
         // TODO Auto-generated method stub
