@@ -257,7 +257,10 @@ public class HRDataViewer implements DataViewer {
     }
 
     @Override public void clearDataFeed() {
-        // TODO Auto-generated method stub
+        stop();
+        hrPanel.removeModel();
+        model.clearData();
+        model = null;
     }
 
     @Override public void setDatastore(final Datastore sDB) {

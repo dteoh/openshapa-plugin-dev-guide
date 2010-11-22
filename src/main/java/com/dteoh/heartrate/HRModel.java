@@ -160,4 +160,10 @@ public class HRModel {
         changeSupport.removePropertyChangeListener("position", listener);
     }
 
+    public void clearData() {
+        pos = 0;
+        timestamps.clear();
+        heartRates.clear();
+    }
+
 }

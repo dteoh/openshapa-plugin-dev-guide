@@ -54,10 +54,7 @@ public class HRPanel extends JPanel {
     }
 
     public void setModel(final HRModel model) {
-
-        if (this.model != null) {
-            this.model.removePositionListener(positionListener);
-        }
+        removeModel();
 
         this.model = model;
         model.addPositionListener(positionListener);
@@ -69,6 +66,14 @@ public class HRPanel extends JPanel {
             });
 
         updateFromModel();
+    }
+
+    public void removeModel() {
+
+        if (model != null) {
+            model.removePositionListener(positionListener);
+            model = null;
+        }
     }
 
     private void updateFromModel() {
